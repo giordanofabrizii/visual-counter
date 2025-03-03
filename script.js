@@ -2,14 +2,17 @@ const counterEl = document.getElementById("counter"); // counter element on the 
 const maxValue = 3921; // value at which the counter have to stop
 var counterValue = 1; // value of the counter at the beginning
 
-const effectDuration = 2000; //< milliseconds that the effect will require
-const intervalTime = effectDuration / maxValue //! the browser does not handle intervals below 4ms well.
+const effectDuration = 2000; // < milliseconds that the effect will require
+const startTime = performance.now() // with performance.now the total time is exactly effectDuration 
 
-let interval = setInterval(() => {
-    if (counterValue <= maxValue) {
-        counterEl.innerText = counterValue;
-        counterValue++
-    } else {
-        clearInterval(interval);
+function updateCounter() {
+    let elapsedTime = performance.now() - startTime;
+    counterValue = Math.min(Math.floor((elapsedTime / effectDuration) * maxValue), maxValue);
+    counterEl.innerText = counterValue;
+
+    if (counterValue < maxValue) {
+        requestAnimationFrame(updateCounter);
     }
-}, intervalTime); // ! set interval
+}
+
+updateCounter();
